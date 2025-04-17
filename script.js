@@ -1,15 +1,16 @@
-/* Lista de palavras para o jogo */
 const palavras = [
-  "javascript",
-  "programacao",
-  "computador",
-  "desenvolvedor",
-  "internet",
-  "tecnologia",
-  "software",
-  "hardware",
-  "algoritmo",
-  "interface"
+  "casa", "gato", "bola", "amor", "sol", "lua", "paz", "flor", "livro", "peixe",
+  "rua", "mesa", "pão", "mãe", "pai", "água", "fogo", "ar", "dia", "noite",
+  "luz", "janela", "porta", "carro", "vaca", "pato", "mel", "rei", "vida", "vento",
+  "areia", "lixo", "chão", "dedo", "pé", "copo", "sapato", "piso", "cama", "couro",
+  "tempo", "nuvem", "olho", "dente", "boca", "nariz", "cabelo", "barco", "rio", "mar",
+  "pente", "pato", "vivo", "morto", "vela", "barro", "pato", "panela", "pano", "cola",
+  "cola", "pipa", "bicho", "urso", "leão", "tigre", "zebra", "cabra", "copo", "leite",
+  "sal", "café", "sopa", "bolo", "ovo", "milho", "milha", "mato", "ninho", "pena", "asa",
+  "mão", "pé", "teto", "telha", "grão", "fio", "rede", "teia", "rato", "vela", "pau", "giz",
+  "estojo", "cola", "papel", "caneta", "livro", "página", "mala", "muro", "linha", "nuvem",
+  "roda", "trilho", "avião", "ônibus", "trator", "navio", "pedra", "areia", "terra", "grama",
+  "sola", "camisa", "jaqueta", "roupa", "meia", "brinco", "anel", "dado", "tampa", "banco", "bico"
 ];
 
 let palavraSelecionada = "";
@@ -17,6 +18,7 @@ let letrasCorretas = [];
 let letrasErradas = [];
 let chancesRestantes = 6;
 let usarApi = true;
+let tecladoAtivo = true;
 
 const exibicaoPalavra = document.getElementById("word-display");
 const exibicaoLetrasErradas = document.getElementById("wrong-letters");
@@ -26,7 +28,6 @@ const exibicaoMensagem = document.getElementById("message");
 const botaoReiniciar = document.getElementById("restart-button");
 const dicaCategoria = document.getElementById("category-hint");
 
-// Função para escolher uma palavra aleatória do array local
 function escolherPalavraAleatoria() {
   const indiceAleatorio = Math.floor(Math.random() * palavras.length);
   palavraSelecionada = palavras[indiceAleatorio];
@@ -35,30 +36,9 @@ function escolherPalavraAleatoria() {
   atualizarExibicaoLetrasErradas();
   criarBotoesLetras();
 }
+escolherPalavraAleatoria();
 
-// Função para buscar palavra da API
-async function buscarPalavraDaApi() {
-  try {
-    const resposta = await fetch("https://random-word-api.herokuapp.com/word?lang=pt-br");
-    const dados = await resposta.json();
-    if (dados && dados.length > 0) {
-      palavraSelecionada = dados[0].toLowerCase();
-      dicaCategoria.textContent = "Categoria: Palavra aleatória da API";
-      atualizarExibicaoPalavra();
-      atualizarExibicaoLetrasErradas();
-      criarBotoesLetras();
-    } else {
-      usarApi = false;
-      escolherPalavraAleatoria();
-    }
-  } catch (erro) {
-    console.error("Erro ao buscar palavra da API:", erro);
-    usarApi = false;
-    escolherPalavraAleatoria();
-  }
-}
 
-// Função para atualizar a exibição da palavra com letras corretas
 function atualizarExibicaoPalavra() {
   const exibicao = palavraSelecionada
     .split("")
@@ -67,13 +47,11 @@ function atualizarExibicaoPalavra() {
   exibicaoPalavra.textContent = exibicao;
 }
 
-// Função para atualizar a exibição das letras erradas
 function atualizarExibicaoLetrasErradas() {
   exibicaoLetrasErradas.textContent = letrasErradas.join(", ");
   exibicaoChancesRestantes.textContent = chancesRestantes;
 }
 
-// Função para criar os botões das letras
 function criarBotoesLetras() {
   containerBotoesLetras.innerHTML = "";
   for (let i = 65; i <= 90; i++) {
@@ -81,27 +59,30 @@ function criarBotoesLetras() {
     const botao = document.createElement("button");
     botao.textContent = letra;
     botao.classList.add("letter-button");
+    botao.setAttribute("data-letra", letra);
     botao.addEventListener("click", () => lidarCliqueLetra(letra, botao));
     containerBotoesLetras.appendChild(botao);
   }
 }
 
-// Função para lidar com o clique nas letras
 function lidarCliqueLetra(letra, botao) {
-  botao.disabled = true;
+  if (botao) botao.disabled = true;
   if (palavraSelecionada.includes(letra)) {
-    letrasCorretas.push(letra);
-    atualizarExibicaoPalavra();
-    verificarVitoria();
+    if (!letrasCorretas.includes(letra)) {
+      letrasCorretas.push(letra);
+      atualizarExibicaoPalavra();
+      verificarVitoria();
+    }
   } else {
-    letrasErradas.push(letra);
-    chancesRestantes--;
-    atualizarExibicaoLetrasErradas();
-    verificarDerrota();
+    if (!letrasErradas.includes(letra)) {
+      letrasErradas.push(letra);
+      chancesRestantes--;
+      atualizarExibicaoLetrasErradas();
+      verificarDerrota();
+    }
   }
 }
 
-// Função para verificar se o jogador venceu
 function verificarVitoria() {
   const conjuntoPalavra = new Set(palavraSelecionada.split(""));
   const conjuntoCorretas = new Set(letrasCorretas);
@@ -111,7 +92,6 @@ function verificarVitoria() {
   }
 }
 
-// Função para verificar se o jogador perdeu
 function verificarDerrota() {
   if (chancesRestantes <= 0) {
     exibicaoMensagem.textContent = `Você perdeu! A palavra era: ${palavraSelecionada}`;
@@ -119,20 +99,18 @@ function verificarDerrota() {
   }
 }
 
-// Função para finalizar o jogo
 function finalizarJogo() {
-  const botoes = document.querySelectorAll(".letter-button");
-  botoes.forEach(botao => (botao.disabled = true));
+  desativarTeclado();
   botaoReiniciar.style.display = "inline-block";
 }
 
-// Função para reiniciar o jogo
 function reiniciarJogo() {
   letrasCorretas = [];
   letrasErradas = [];
   chancesRestantes = 6;
   exibicaoMensagem.textContent = "";
   botaoReiniciar.style.display = "none";
+  tecladoAtivo = true;
   if (usarApi) {
     buscarPalavraDaApi();
   } else {
@@ -143,6 +121,26 @@ function reiniciarJogo() {
   criarBotoesLetras();
 }
 
-// Inicialização do jogo
+function desativarTeclado() {
+  tecladoAtivo = false;
+  const botoes = document.querySelectorAll(".letter-button");
+  botoes.forEach(botao => {
+    botao.disabled = true;
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (!tecladoAtivo) return;
+  const letra = event.key.toLowerCase();
+  if (letra.match(/^[a-z]$/) && !letrasCorretas.includes(letra) && !letrasErradas.includes(letra)) {
+    const botao = document.querySelector(`.letter-button:enabled[data-letra="${letra}"]`);
+    if (botao) {
+      botao.click();
+    } else {
+      lidarCliqueLetra(letra, null);
+    }
+  }
+});
+
 botaoReiniciar.addEventListener("click", reiniciarJogo);
 reiniciarJogo();
