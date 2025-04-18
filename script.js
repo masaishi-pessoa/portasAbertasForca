@@ -111,11 +111,8 @@ function reiniciarJogo() {
   exibicaoMensagem.textContent = "";
   botaoReiniciar.style.display = "none";
   tecladoAtivo = true;
-  if (usarApi) {
-    buscarPalavraDaApi();
-  } else {
-    escolherPalavraAleatoria();
-  }
+  
+  escolherPalavraAleatoria();
   atualizarExibicaoPalavra();
   atualizarExibicaoLetrasErradas();
   criarBotoesLetras();
