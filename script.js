@@ -17,7 +17,6 @@ let palavraSelecionada = "";
 let letrasCorretas = [];
 let letrasErradas = [];
 let chancesRestantes = 6;
-let usarApi = true;
 let tecladoAtivo = true;
 
 const exibicaoPalavra = document.getElementById("word-display");
