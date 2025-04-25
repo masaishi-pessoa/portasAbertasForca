@@ -111,7 +111,7 @@ function reiniciarJogo() {
   exibicaoMensagem.textContent = "";
   botaoReiniciar.style.display = "none";
   tecladoAtivo = true;
-  
+
   escolherPalavraAleatoria();
   atualizarExibicaoPalavra();
   atualizarExibicaoLetrasErradas();
