@@ -114,3 +114,24 @@ h1 {
     width: 100%;
   }
 }
+
+#theme-selection {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.theme-button {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #8e44ad;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-button:hover {
+  background-color: #732d91;
+}

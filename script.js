@@ -1,23 +1,35 @@
-const palavras = [
-  "casa", "gato", "bola", "amor", "sol", "lua", "paz", "flor", "livro", "peixe",
-  "rua", "mesa", "pão", "mãe", "pai", "água", "fogo", "ar", "dia", "noite",
-  "luz", "janela", "porta", "carro", "vaca", "pato", "mel", "rei", "vida", "vento",
-  "areia", "lixo", "chão", "dedo", "pé", "copo", "sapato", "piso", "cama", "couro",
-  "tempo", "nuvem", "olho", "dente", "boca", "nariz", "cabelo", "barco", "rio", "mar",
-  "pente", "pato", "vivo", "morto", "vela", "barro", "pato", "panela", "pano", "cola",
-  "cola", "pipa", "bicho", "urso", "leão", "tigre", "zebra", "cabra", "copo", "leite",
-  "sal", "café", "sopa", "bolo", "ovo", "milho", "milha", "mato", "ninho", "pena", "asa",
-  "mão", "pé", "teto", "telha", "grão", "fio", "rede", "teia", "rato", "vela", "pau", "giz",
-  "estojo", "cola", "papel", "caneta", "livro", "página", "mala", "muro", "linha", "nuvem",
-  "roda", "trilho", "avião", "ônibus", "trator", "navio", "pedra", "areia", "terra", "grama",
-  "sola", "camisa", "jaqueta", "roupa", "meia", "brinco", "anel", "dado", "tampa", "banco", "bico"
-];
+const palavrasPorTema = {
+  frutas: [
+    "abacate", "abacaxi", "acerola", "ameixa", "banana", "caju", "cereja", "figo", "framboesa", "goiaba",
+    "graviola", "jabuticaba", "jaca", "kiwi", "laranja", "limão", "lichia", "maçã", "mamão", "manga",
+    "maracujá", "melancia", "melão", "morango", "nectarina", "pera", "pêssego", "pitanga", "pitaya", "tamarindo",
+    "uva", "umbu", "cambuci", "cupuaçu", "cacau", "açaí", "ameixa", "carambola", "sapoti", "grape"
+  ],
+  objetos: [
+    "cadeira", "mesa", "espelho", "caneta", "janela", "relógio", "mochila", "chave", "sofá", "lâmpada",
+    "ventilador", "computador", "celular", "telefone", "controle", "micro-ondas", "panela", "garfo", "travesseiro", "óculos",
+    "livro", "porta", "colher", "copo", "caneca", "caderno", "borracha", "tesoura", "régua", "estojo",
+    "quadro", "gaveta", "armário", "escada", "tijolo", "prego", "martelo", "serrote", "furadeira", "fechadura"
+  ],
+  animais: [
+    "gato", "cachorro", "elefante", "leão", "girafa", "zebra", "macaco", "tigre", "lobo", "coelho",
+    "pinguim", "jacaré", "rinoceronte", "tatu", "ornitorrinco", "cervo", "águia", "coruja", "panda", "tubarão",
+    "cavalo", "porco", "vaca", "bicho-preguiça", "onça", "suricato", "golfinho", "polvo", "camelo", "jacaré",
+    "cobra", "sapo", "lagarto", "mariposa", "borboleta", "abelha", "formiga", "aranha", "pato", "galinha"
+  ]
+};
+
+function removerAcentos(letra) {
+  return letra.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 
 let palavraSelecionada = "";
 let letrasCorretas = [];
 let letrasErradas = [];
 let chancesRestantes = 6;
 let tecladoAtivo = true;
+let temaSelecionado = "";
 
 const exibicaoPalavra = document.getElementById("word-display");
 const exibicaoLetrasErradas = document.getElementById("wrong-letters");
@@ -28,20 +40,19 @@ const botaoReiniciar = document.getElementById("restart-button");
 const dicaCategoria = document.getElementById("category-hint");
 
 function escolherPalavraAleatoria() {
-  const indiceAleatorio = Math.floor(Math.random() * palavras.length);
-  palavraSelecionada = palavras[indiceAleatorio];
-  dicaCategoria.textContent = "Categoria: Palavra local";
+  const lista = palavrasPorTema[temaSelecionado];
+  const indiceAleatorio = Math.floor(Math.random() * lista.length);
+  palavraSelecionada = lista[indiceAleatorio];
+  dicaCategoria.textContent = `Categoria: ${temaSelecionado.charAt(0).toUpperCase() + temaSelecionado.slice(1)}`;
   atualizarExibicaoPalavra();
   atualizarExibicaoLetrasErradas();
   criarBotoesLetras();
 }
-escolherPalavraAleatoria();
 
-
-function atualizarExibicaoPalavra() {
+function atualizarExibicaoPalavra(revelarTudo = false) {
   const exibicao = palavraSelecionada
     .split("")
-    .map(letra => (letrasCorretas.includes(letra) ? letra : "_"))
+    .map(letra => (letrasCorretas.includes(letra) || revelarTudo ? letra : "_"))
     .join(" ");
   exibicaoPalavra.textContent = exibicao;
 }
@@ -66,12 +77,24 @@ function criarBotoesLetras() {
 
 function lidarCliqueLetra(letra, botao) {
   if (botao) botao.disabled = true;
-  if (palavraSelecionada.includes(letra)) {
-    if (!letrasCorretas.includes(letra)) {
-      letrasCorretas.push(letra);
-      atualizarExibicaoPalavra();
-      verificarVitoria();
+
+  const palavraNormalizada = removerAcentos(palavraSelecionada);
+  const letraNormalizada = removerAcentos(letra);
+
+  let acerto = false;
+
+  for (let i = 0; i < palavraSelecionada.length; i++) {
+    if (removerAcentos(palavraSelecionada[i]) === letraNormalizada) {
+      acerto = true;
+      if (!letrasCorretas.includes(palavraSelecionada[i])) {
+        letrasCorretas.push(palavraSelecionada[i]);
+      }
     }
+  }
+
+  if (acerto) {
+    atualizarExibicaoPalavra();
+    verificarVitoria();
   } else {
     if (!letrasErradas.includes(letra)) {
       letrasErradas.push(letra);
@@ -82,17 +105,23 @@ function lidarCliqueLetra(letra, botao) {
   }
 }
 
+
 function verificarVitoria() {
-  const conjuntoPalavra = new Set(palavraSelecionada.split(""));
-  const conjuntoCorretas = new Set(letrasCorretas);
-  if (conjuntoPalavra.size === conjuntoCorretas.size) {
+  const letrasÚnicas = Array.from(new Set(palavraSelecionada.split("").filter(l => l !== " ")));
+  const acertouTudo = letrasÚnicas.every(letra =>
+    letrasCorretas.includes(letra)
+  );
+
+  if (acertouTudo) {
     exibicaoMensagem.textContent = "Parabéns! Você venceu!";
     finalizarJogo();
   }
 }
 
+
 function verificarDerrota() {
   if (chancesRestantes <= 0) {
+    atualizarExibicaoPalavra(true); // revela a palavra
     exibicaoMensagem.textContent = `Você perdeu! A palavra era: ${palavraSelecionada}`;
     finalizarJogo();
   }
@@ -112,9 +141,6 @@ function reiniciarJogo() {
   tecladoAtivo = true;
 
   escolherPalavraAleatoria();
-  atualizarExibicaoPalavra();
-  atualizarExibicaoLetrasErradas();
-  criarBotoesLetras();
 }
 
 function desativarTeclado() {
@@ -139,4 +165,14 @@ document.addEventListener("keydown", (event) => {
 });
 
 botaoReiniciar.addEventListener("click", reiniciarJogo);
-reiniciarJogo();
+
+// Seletor de tema
+const botoesTema = document.querySelectorAll(".theme-button");
+botoesTema.forEach(botao => {
+  botao.addEventListener("click", () => {
+    temaSelecionado = botao.dataset.tema;
+    document.getElementById("theme-selection").style.display = "none";
+    document.getElementById("game-container").style.display = "block";
+    reiniciarJogo();
+  });
+});
