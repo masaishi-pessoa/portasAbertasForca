@@ -135,3 +135,9 @@ h1 {
 .theme-button:hover {
   background-color: #732d91;
 }
+
+#hangman-image {
+  width: 200px;
+  margin: 0 auto 20px;
+  display: block;
+}

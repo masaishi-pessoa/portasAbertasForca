@@ -2,19 +2,19 @@ const palavrasPorTema = {
   frutas: [
     "abacate", "abacaxi", "acerola", "ameixa", "banana", "caju", "cereja", "figo", "framboesa", "goiaba",
     "graviola", "jabuticaba", "jaca", "kiwi", "laranja", "limão", "lichia", "maçã", "mamão", "manga",
-    "maracujá", "melancia", "melão", "morango", "nectarina", "pera", "pêssego", "pitanga", "pitaya", "tamarindo",
-    "uva", "umbu", "cambuci", "cupuaçu", "cacau", "açaí", "ameixa", "carambola", "sapoti", "grape"
+    "maracujá", "melancia", "melão", "morango", "pera", "pêssego", "pitanga", "pitaya", "tamarindo",
+    "uva", "cupuaçu", "cacau", "açaí", "ameixa", "carambola"
   ],
   objetos: [
     "cadeira", "mesa", "espelho", "caneta", "janela", "relógio", "mochila", "chave", "sofá", "lâmpada",
-    "ventilador", "computador", "celular", "telefone", "controle", "micro-ondas", "panela", "garfo", "travesseiro", "óculos",
+    "ventilador", "computador", "celular", "telefone", "controle", "panela", "garfo", "travesseiro", "óculos",
     "livro", "porta", "colher", "copo", "caneca", "caderno", "borracha", "tesoura", "régua", "estojo",
     "quadro", "gaveta", "armário", "escada", "tijolo", "prego", "martelo", "serrote", "furadeira", "fechadura"
   ],
   animais: [
     "gato", "cachorro", "elefante", "leão", "girafa", "zebra", "macaco", "tigre", "lobo", "coelho",
     "pinguim", "jacaré", "rinoceronte", "tatu", "ornitorrinco", "cervo", "águia", "coruja", "panda", "tubarão",
-    "cavalo", "porco", "vaca", "bicho-preguiça", "onça", "suricato", "golfinho", "polvo", "camelo", "jacaré",
+    "cavalo", "porco", "vaca", "onça", "suricato", "golfinho", "polvo", "camelo", "jacaré",
     "cobra", "sapo", "lagarto", "mariposa", "borboleta", "abelha", "formiga", "aranha", "pato", "galinha"
   ]
 };
@@ -36,6 +36,7 @@ const exibicaoLetrasErradas = document.getElementById("wrong-letters");
 const exibicaoChancesRestantes = document.getElementById("remaining-chances");
 const containerBotoesLetras = document.getElementById("letter-buttons");
 const exibicaoMensagem = document.getElementById("message");
+const hangmanImage = document.getElementById("hangman-image");
 const botaoReiniciar = document.getElementById("restart-button");
 const dicaCategoria = document.getElementById("category-hint");
 
@@ -99,6 +100,8 @@ function lidarCliqueLetra(letra, botao) {
     if (!letrasErradas.includes(letra)) {
       letrasErradas.push(letra);
       chancesRestantes--;
+      const erros = 6 - chancesRestantes;
+      hangmanImage.src = `images/forca${erros}.png`;
       atualizarExibicaoLetrasErradas();
       verificarDerrota();
     }
@@ -139,6 +142,7 @@ function reiniciarJogo() {
   exibicaoMensagem.textContent = "";
   botaoReiniciar.style.display = "none";
   tecladoAtivo = true;
+  hangmanImage.src = "images/forca0.png";
 
   escolherPalavraAleatoria();
 }
