@@ -111,6 +111,7 @@ function lidarCliqueLetra(letra, botao) {
 
 function verificarVitoria() {
   const letrasÚnicas = Array.from(new Set(palavraSelecionada.split("").filter(l => l !== " ")));
+  exibicaoMensagem.style.color = "green";
   const acertouTudo = letrasÚnicas.every(letra =>
     letrasCorretas.includes(letra)
   );
