@@ -101,7 +101,7 @@ function lidarCliqueLetra(letra, botao) {
       letrasErradas.push(letra);
       chancesRestantes--;
       const erros = 6 - chancesRestantes;
-      hangmanImage.src = `images/forca${erros}.png`;
+      hangmanImage.src = `imgs/forca${erros}.png`;
       atualizarExibicaoLetrasErradas();
       verificarDerrota();
     }
@@ -117,6 +117,7 @@ function verificarVitoria() {
 
   if (acertouTudo) {
     exibicaoMensagem.textContent = "Parabéns! Você venceu!";
+    hangmanImage.src = "imgs/forca6.png";
     finalizarJogo();
   }
 }
@@ -126,6 +127,8 @@ function verificarDerrota() {
   if (chancesRestantes <= 0) {
     atualizarExibicaoPalavra(true); // revela a palavra
     exibicaoMensagem.textContent = `Você perdeu! A palavra era: ${palavraSelecionada}`;
+    exibicaoMensagem.style.color = "red";
+    hangmanImage.src = "imgs/forca7.png";
     finalizarJogo();
   }
 }
@@ -142,7 +145,7 @@ function reiniciarJogo() {
   exibicaoMensagem.textContent = "";
   botaoReiniciar.style.display = "none";
   tecladoAtivo = true;
-  hangmanImage.src = "images/forca0.png";
+  hangmanImage.src = "imgs/forca0.png";
 
   escolherPalavraAleatoria();
 }
